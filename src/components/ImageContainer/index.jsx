@@ -90,7 +90,7 @@ const ImageContainer = (props) => {
               <img
                 ref={highRefs[index]}
                 className="high-res"
-                key={`${image.alt}-highRes-${index}`}
+                key={`${image.alt}-highRes`}
                 alt={image.alt}
                 onLoad={setVisiblilty(highRefs[index], index)}
                 data-highres={image.highResSrc}
