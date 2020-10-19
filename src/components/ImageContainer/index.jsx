@@ -25,10 +25,11 @@ const ImageContainer = (props) => {
   }, [images]);
 
   useEffect(() => {
-    setLoadedImages((im) =>
-      new Array(images.length).fill({
-        loaded: false
-      })
+    setLoadedImages(
+      images.map((image, index) => ({
+        loaded: false,
+        id: image.id
+      }))
     );
   }, [images]);
 
@@ -64,22 +65,14 @@ const ImageContainer = (props) => {
     }
   }, [images, observer, isPolyfillNeeded]);
 
-  // const onImageLoad = (index) => () => {
-  //   loadedImages[index].loaded = true;
-  //   console.log("image loaded", index);
-  //   console.log("loadedImages", loadedImages);
-  //   setLoadedImages([...loadedImages]);
-  // };
-
   const setVisiblilty = (ref, index) => () => {
-    // console.log("ref=====", ref.current);
     if (ref && ref.current) {
-      // debugger;
-      ref.current.style.visibility = "visible";
+        ref.current.style.opacity = 1;
     }
     if (loadedImages.length > 0) {
       loadedImages[index].loaded = true;
       setLoadedImages([...loadedImages]);
+
     }
   };
 
@@ -94,7 +87,6 @@ const ImageContainer = (props) => {
         images.map((image, index) => (
           <div className="image-container">
             <div className="aspect-ratio-box" key={image.alt}>
-              {/* {loadedImages[index] && ( */}
               <img
                 ref={highRefs[index]}
                 className="high-res"
@@ -105,17 +97,15 @@ const ImageContainer = (props) => {
                 onLoad={setVisiblilty(highRefs[index], index)}
               />
 
-              {!loadedImages[index] && (
+              {loadedImages && loadedImages[index] && !loadedImages[index].loaded && (
                 <img
                   className="thumb-image"
                   key={`${image.alt}-thumb`}
                   alt={image.alt}
                   loading="lazy"
-                  // onLoad={onImageLoad(index)}
                   src={image.thumbSrc}
-                  // data-highRes={}
                 />
-              )}
+               )}
             </div>
           </div>
         ))}
