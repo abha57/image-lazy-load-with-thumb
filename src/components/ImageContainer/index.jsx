@@ -2,20 +2,13 @@ import React, { createRef, useEffect, useState } from "react";
 import "./style.scss";
 
 const ImageContainer = (props) => {
-  const initPolyfill = () => {
-    if (!("loading" in HTMLImageElement.prototype)) {
-      return true;
-    }
-    return true; //false
-  };
-
   const { images } = props;
   const [observer, setIntersectionObserver] = useState(null);
-  // const [isPolyfillNeeded] = useState(initPolyfill);
   const [loadedImages, setLoadedImages] = useState([]);
   const [highRefs, setHighRefs] = useState([]);
-  const [thumbRefs, setThumbRefs] = useState([]); // isPolyfillNeeded
+  const [thumbRefs, setThumbRefs] = useState([]);
 
+  // these are high resolution refs.
   useEffect(() => {
     setHighRefs((newRefs) =>
       new Array(images.length)
@@ -24,6 +17,7 @@ const ImageContainer = (props) => {
     );
   }, [images]);
 
+  // // these are thumb refs
   useEffect(() => {
       setThumbRefs((newRefs) =>
       new Array(images.length)
@@ -44,20 +38,21 @@ const ImageContainer = (props) => {
   useEffect(() => {
       const observer = new IntersectionObserver((entries, self) => {
         entries.map((entry) => {
+          // the individual entry or dom element, our observer observes.
           if (entry.isIntersecting) {
+             // we will be using dataset properties for passing the image sources.
             entry.target.src = entry.target.dataset.highres || entry.target.dataset.thumb;
             self.unobserve(entry.target);
           }
         });
       }, {});
       setIntersectionObserver(observer);
-    
   }, []);
 
   useEffect(() => {
     if (thumbRefs.length > 0) {
       thumbRefs.map((ref) => {
-        observer.observe(ref.current);
+        observer.observe(ref.current);  // adding ref to observer.
       });
     }
   }, [thumbRefs, observer]);
@@ -65,7 +60,7 @@ const ImageContainer = (props) => {
   useEffect(() => {
     if (highRefs.length > 0) {
       highRefs.map((ref) => {
-        observer.observe(ref.current);
+        observer.observe(ref.current);  // adding ref to observer.
       });
     }
   }, [highRefs, observer]);
@@ -83,10 +78,10 @@ const ImageContainer = (props) => {
 
   return (
     <>
-      <div className='images-container'>
       {images.map((image, index) => (
           <div className="image-container">
             <div className="aspect-ratio-box" key={image.alt}>
+              {/* // we will be loading two images initially. */}
               <img
                 ref={highRefs[index]}
                 className="high-res"
@@ -95,6 +90,7 @@ const ImageContainer = (props) => {
                 onLoad={setVisiblilty(highRefs[index], index)}
                 data-highres={image.highResSrc}
               />
+              {/* // we will hide this thumb image when actual image loads. */}
               {loadedImages && loadedImages[index] && !loadedImages[index].loaded && (
                 <img
                   ref={thumbRefs[index]}
@@ -105,17 +101,10 @@ const ImageContainer = (props) => {
                 />
                )}
             </div>
-            <div className='static'>
-              This section is to check for the layout shifts when images load.
-            </div>
           </div>
         ))
 
       }
-
-      
-      
-    </div>
     </>
   );
 };

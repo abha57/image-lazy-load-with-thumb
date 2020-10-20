@@ -6,7 +6,7 @@
     position: relative;
     background-color: white;
     height: 0;
-    padding-top: 25%;
+    padding-top: 25%; // landscape-view
   
      img {
        position: absolute;
@@ -14,19 +14,13 @@
        left: 0;
       width: 100%;
         height: 100%;
-  
-      &.thumb-image {
-        filter: blur(10px);
-      }
-      &.high-res {
-        opacity: 0;
-      }
-  
+      
+        &.thumb-image {
+          filter: blur(10px);
+        }
+        &.high-res {
+          opacity: 0;
+        }
      }
   }
-}
-
-.static {
-  padding: 10px;
-  text-align: center;
 }
